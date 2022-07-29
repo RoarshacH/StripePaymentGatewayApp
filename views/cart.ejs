@@ -46,15 +46,17 @@
                 <br />
                 and Pay Here
               </h1>
-              <p class="lead text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, deserunt molestias aspernatur laboriosam similique officiis et itaque doloremque sunt veniam vitae culpa velit, voluptatibus nulla, quod cumque aut inventore natus.</p>
+              <p class="lead text-muted">
+                <form action="payment" method="POST">
+                    <script src="//checkout.stripe.com/v2/checkout.js" class="stripe-button" data-key="<%= stripeKey %>" data-amount="2000" data-currency="cad" data-name="Test User" data-description="Test payment" data-locale="auto"></script>
+                  </form>
+              </p>
             </div>
           </section>
         </div>
       </div>
       <div class="container">
-        <form action="payment" method="POST">
-          <script src="//checkout.stripe.com/v2/checkout.js" class="stripe-button" data-key="<%= stripeKey %>" data-amount="2000" data-currency="cad" data-name="Test User" data-description="Test payment" data-locale="auto"></script>
-        </form>
+       
       </div>
     </main>
 
