@@ -1,0 +1,5 @@
+    <!-- <div class="card" style="background-color: <%= colours[index] %>">
+              <div class="container">
+                <p style="color: <%= invertCol[index] %>"><%= newItems[index] %></p>
+              </div>
+            </div> -->

@@ -1,0 +1,83 @@
+body {
+  padding-top: 3rem;
+}
+
+.jumbotron-custom {
+  background-image: url("../img/bg-2.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.jumbotron-item {
+  vertical-align: middle !important;
+  display: inline-block;
+  vertical-align: middle;
+  float: none;
+  margin-top: 7rem;
+  color: white !important;
+}
+.jumbotron-contact {
+  color: white !important;
+  text-decoration: solid;
+  font-size: 2rem !important;
+  font-style: oblique;
+}
+.custom-button {
+  background-color: #48687f;
+  color: #fdefd4;
+}
+@media (max-width: 768px) {
+  .custom-button {
+    background-color: #fdefd4;
+    color: #48687f;
+  }
+  .custom-table {
+    position: absolute !important;
+    top: 300px !important;
+    color: azure;
+  }
+  .custom-img {
+    display: none;
+  }
+  .link-btn {
+    display: none;
+  }
+}
+
+@media (min-width: 668px) {
+  .jumbotron-custom {
+    height: 100vh;
+  }
+}
+
+.footer {
+  color: white;
+}
+.bodybackground-bg {
+  background-image: url("../img/bg-8.webp");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.userDetails .col-lg-4 {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+.userDetails h2 {
+  font-weight: 400;
+}
+
+.userDetails .col-lg-4 p {
+  margin-right: 0.75rem;
+  margin-left: 0.75rem;
+}
+
+.section-divider {
+  margin: 2rem 0;
+}
+
+.featurette-heading {
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.05rem;
+}
