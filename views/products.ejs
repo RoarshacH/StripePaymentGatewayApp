@@ -55,26 +55,27 @@
           <h1 class="fw-light mb-4 text-center">Products List</h1>
           <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
             <!-- <div class="outer-card"> -->
-            <% for (let index = 0; index < 9; index++) { %>
-            <div class="col">
+            <% items.music.forEach(function(item){ %>
+            <div class="col" data-item-id="<%= item.id %>">
               <div class="card shadow-sm">
-                <img src="./img/image6.jpg" class="card-img-top rounded" alt="" height="250" />
+                <img src="./img/<%= item.imgName %>" class="card-img-top rounded" alt="" height="250" />
 
                 <div class="card-body">
+                  <h4><%= item.name %></h4>
                   <p class="card-text">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nemo recusandae vel odio nulla. Fugiat, dolores obcaecati, consectetur consequuntur deserunt non magnam sit nisi vitae nihil cupiditate, quam minus nam voluptatum.</p>
                 </div>
                 <div class="pb-3 mx-3 d-flex justify-content-between align-items-center">
                   <div class="btn-group" role="group">
                     <button type="button" class="btn btn-outline-secondary">Left</button>
-                    <button type="button" class="btn btn-outline-secondary">Middle</button>
+                    <button type="button" class="btn btn-outline-secondary">ADD TO CART</button>
                     <button type="button" class="btn btn-outline-secondary">Right</button>
                   </div>
-                  <small class="text-muted">2 Days Ago</small>
+                  <small class="text-muted">$<%= item.price / 100 %></small>
                 </div>
               </div>
             </div>
 
-            <% } %>
+            <% }) %>
             <!-- </div> -->
           </div>
         </div>
