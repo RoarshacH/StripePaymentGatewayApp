@@ -9,6 +9,72 @@
     <!-- Bootstarp-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous" />
     <link rel="stylesheet" href="css/styles.css" />
+    <script>
+      console.log("My cart" + localStorage.getItem("cart"));
+      function addToCart(item) {
+        var newItem = JSON.parse(item);
+        var itemFound = false;
+        if (localStorage.getItem("cart")) {
+          var newCart = JSON.parse(localStorage.getItem("cart"));
+          newCart.items.forEach((element) => {
+            if (element.id === newItem.id) {
+              itemFound = true;
+              element.quentity = element.quentity + 1;
+              localStorage.setItem("cart", JSON.stringify(newCart));
+              console.log("Qty Updated" + localStorage.getItem("cart"));
+              return;
+            }
+          });
+          if (!itemFound) {
+            newCart["items"].push({ id: newItem.id, name: newItem.name, price: newItem.price, quentity: 1 });
+            localStorage.setItem("cart", JSON.stringify(newCart));
+            console.log("New Item Added" + localStorage.getItem("cart"));
+            return;
+          }
+        } else {
+          console.log("Create Cart Here");
+          var obj = { items: [], total: 0.0, username: "Test User" };
+          obj["items"].push({ id: newItem.id, name: newItem.name, price: newItem.price, quentity: 1 });
+          localStorage.setItem("cart", JSON.stringify(obj));
+          console.log("Created Cart " + JSON.stringify(obj));
+        }
+      }
+
+      function removeFromCart(item) {
+        var newItem = JSON.parse(item);
+        var itemFound = false;
+        if (localStorage.getItem("cart")) {
+          var newCart = JSON.parse(localStorage.getItem("cart"));
+          newCart.items.forEach((element) => {
+            if (element.id === newItem.id) {
+              itemFound = true;
+              element.quentity = element.quentity - 1;
+              if (element.quentity <= 0) {
+                newCart.items = newCart.items.filter((data) => data.id !== newItem.id);
+              }
+              localStorage.setItem("cart", JSON.stringify(newCart));
+              console.log("Qty Updated" + localStorage.getItem("cart"));
+              return;
+            }
+          });
+          if (!itemFound) {
+            console.log("You Dont Have this item in the cart");
+            return;
+          }
+        } else {
+          console.log("You Dont Have items in the cart");
+        }
+      }
+
+      function removeCart() {
+        localStorage.removeItem("cart");
+        if (localStorage.getItem("cart")) {
+          console.log(localStorage.getItem("cart"));
+        } else {
+          console.log("No Cart Here");
+        }
+      }
+    </script>
   </head>
   <body class="d-flex flex-column h-100">
     <!-- Navbar Section -->
@@ -44,7 +110,7 @@
             <h1 class="fw-light">Products List</h1>
             <p class="lead text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, deserunt molestias aspernatur laboriosam similique officiis et itaque doloremque sunt veniam vitae culpa velit, voluptatibus nulla, quod cumque aut inventore natus.</p>
             <p>
-              <a href="#" class="btn btn-primary my-2 link-btn">Go To Link</a>
+              <button onclick="removeCart()" class="btn btn-primary my-2 link-btn">Clear Cart</button>
             </p>
           </div>
         </div>
@@ -55,7 +121,7 @@
           <h1 class="fw-light mb-4 text-center">Products List</h1>
           <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
             <!-- <div class="outer-card"> -->
-            <% items.music.forEach(function(item){ %>
+            <% items.forEach(function(item){ %>
             <div class="col" data-item-id="<%= item.id %>">
               <div class="card shadow-sm">
                 <img src="./img/<%= item.imgName %>" class="card-img-top rounded" alt="" height="250" />
@@ -66,15 +132,13 @@
                 </div>
                 <div class="pb-3 mx-3 d-flex justify-content-between align-items-center">
                   <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-outline-secondary">Left</button>
-                    <button type="button" class="btn btn-outline-secondary">ADD TO CART</button>
-                    <button type="button" class="btn btn-outline-secondary">Right</button>
+                    <button type="button" class="btn btn-outline-secondary">$<%= item.price / 100 %></button>
+                    <button type="button" onclick="addToCart('<%= JSON.stringify(item) %>')" class="btn btn-outline-secondary">ADD TO CART</button>
+                    <button type="button" onclick="removeFromCart('<%= JSON.stringify(item) %>')" class="btn btn-outline-secondary">Remove From Cart</button>
                   </div>
-                  <small class="text-muted">$<%= item.price / 100 %></small>
                 </div>
               </div>
             </div>
-
             <% }) %>
             <!-- </div> -->
           </div>

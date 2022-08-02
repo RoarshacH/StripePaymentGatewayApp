@@ -1,22 +1,23 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
+var mongoose = require("mongoose");
 require("dotenv").config();
-const fs = require("fs");
+
+const Products = mongoose.model("Products");
 
 exports.fetch_home = (req, res) => {
   res.render("home", { title: "Shopping App", auth: req.oidc.isAuthenticated() ? "Logged in" : "Logged out" });
 };
 
 exports.fetch_products = (req, res) => {
-  fs.readFile("../../items.json", function (error, data) {
-    if (error) {
+  Products.find({}, (err, task) => {
+    if (err) {
       res.status(500).end();
-    } else {
-      res.render("products", {
-        stripePublicKey: process.env.STRIPE_KEY,
-        items: JSON.parse(data),
-        title: "Products Page",
-      });
     }
+    res.render("products", {
+      stripePublicKey: process.env.STRIPE_KEY,
+      items: task,
+      title: "Products Page",
+    });
   });
   // res.render("products", { title: "Products Page" });
 };

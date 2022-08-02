@@ -1,9 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-require("dotenv").config();
-const fs = require("fs");
 const InitiateMongoServer = require("./db");
 
+require("dotenv").config();
 InitiateMongoServer();
 
 var Cart = require("./api/model/cartModel");
@@ -15,8 +14,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.static("public"));
-
-let title = "Stripe Web App";
 
 // OAuth
 const { auth, requiresAuth } = require("express-openid-connect");
@@ -34,23 +31,9 @@ app.use(
 // Stripe
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
-app.get("/products", function (req, res) {
-  fs.readFile("items.json", function (error, data) {
-    if (error) {
-      res.status(500).end();
-    } else {
-      res.render("products", {
-        stripePublicKey: process.env.STRIPE_KEY,
-        items: JSON.parse(data),
-        title: "Products Page",
-      });
-    }
-  });
-  // res.render("products", { title: "Products Page" });
-});
-
 var cartRoutes = require("./api/routes/cartRoutes");
 var mainRoutes = require("./api/routes/mainRoutes");
+
 mainRoutes(app);
 cartRoutes(app);
 
