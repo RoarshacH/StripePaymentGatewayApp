@@ -1,77 +1,106 @@
-const res = require("express/lib/response");
 var mongoose = require("mongoose");
 require("dotenv").config();
-var Cart = mongoose.model("Cart");
+
+if (typeof localStorage === "undefined" || localStorage === null) {
+  var LocalStorage = require("node-localstorage").LocalStorage;
+  localStorage = new LocalStorage("./scratch");
+}
+
+// var Cart = mongoose.model("Cart");
 
 exports.get_my_cart = (req, res) => {
-  res.render("cart", { title: "My Cart", stripeKey: process.env.STRIPE_KEY });
+  console.log(localStorage.getItem("cart"));
+  if (localStorage.getItem("cart")) {
+    var cart = JSON.parse(localStorage.getItem("cart"));
+    res.render("cart", { title: "My Cart", stripeKey: process.env.STRIPE_KEY, cart: cart });
+  } else {
+    res.render("cart", { title: "My Cart", stripeKey: process.env.STRIPE_KEY, cart: undefined });
+  }
+};
+
+exports.remove_item_from_cart = (req, res) => {
+  var item = { id: req.body.id, name: req.body.name, price: req.body.price };
+  console.log(item);
+  removeFromCart(item);
+  res.json({ msg: `Hello ${req.body.item}` });
 };
 
 exports.add_item_to_cart = (req, res) => {
-  Cart.findOne({ CartID: req.params.id }, (err, task) => {
-    if (err) {
-      res.send(err);
-    }
-    task.CartItems.forEach((element) => {
-      if (element.name === req.params.item_name) {
+  var item = { id: req.body.id, name: req.body.name, price: req.body.price };
+  console.log(item);
+  addToCart(item);
+
+  res.json({ msg: `Hello ${req.body.name}` });
+};
+
+exports.remove_cart = (req, res) => {
+  removeCart();
+  res.json({ msg: `Cart Removed` });
+};
+
+function addToCart(newItem) {
+  var itemFound = false;
+  if (localStorage.getItem("cart")) {
+    var newCart = JSON.parse(localStorage.getItem("cart"));
+    newCart.items.forEach((element) => {
+      if (element.id === newItem.id) {
+        itemFound = true;
         element.quentity = element.quentity + 1;
-        res.json(task);
-        // return from here
+        newCart.total = newCart.total + newItem.price;
+        localStorage.setItem("cart", JSON.stringify(newCart));
+        console.log("Qty Updated" + localStorage.getItem("cart"));
+        return;
       }
     });
-    // Update after change
-    Cart.findOneAndUpdate({ CartID: req.params.id }, task, (err, data) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send(data);
-        console.log("Data updated!");
+    if (!itemFound) {
+      newCart["items"].push({ id: newItem.id, name: newItem.name, price: newItem.price, quentity: 1 });
+      newCart.total = newCart.total + newItem.price;
+      localStorage.setItem("cart", JSON.stringify(newCart));
+      console.log("New Item Added" + localStorage.getItem("cart"));
+      return;
+    }
+  } else {
+    console.log("Create Cart Here");
+    var obj = { items: [], total: 0.0, username: "Test User" };
+    obj["items"].push({ id: newItem.id, name: newItem.name, price: newItem.price, quentity: 1 });
+    obj.total = newItem.price;
+    localStorage.setItem("cart", JSON.stringify(obj));
+    console.log("Created Cart " + JSON.stringify(obj));
+  }
+}
+
+function removeFromCart(newItem) {
+  var itemFound = false;
+  if (localStorage.getItem("cart")) {
+    var newCart = JSON.parse(localStorage.getItem("cart"));
+    newCart.items.forEach((element) => {
+      if (element.id === newItem.id) {
+        itemFound = true;
+        element.quentity = element.quentity - 1;
+        newCart.items = newCart.items.filter((data) => data.id !== newItem.id);
+        newCart.total = newCart.total - data.price;
+        if (element.quentity <= 0) {
+          newCart.items = newCart.items.filter((data) => data.id !== newItem.id);
+        }
+        localStorage.setItem("cart", JSON.stringify(newCart));
+        console.log("Qty Updated" + localStorage.getItem("cart"));
+        return;
       }
     });
-    // res.json(task);
-  });
-};
-
-//Create a New Course CourseName and CourseID is required
-exports.create_a_cart = (req, res) => {
-  var newCart = new Cart(req.body);
-  newCart.save((err, task) => {
-    if (err) {
-      res.send(err);
+    if (!itemFound) {
+      console.log("You Dont Have this item in the cart");
+      return;
     }
-    res.json(task);
-  });
-};
+  } else {
+    console.log("You Dont Have items in the cart");
+  }
+}
 
-//Update a exisiting course
-exports.update_a_cart = (req, res) => {
-  Cart.findOneAndUpdate({ CartID: req.params.id }, req.body, (err, data) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(data);
-      console.log("Data updated!");
-    }
-  });
-};
-
-//Delete a Course Given the CourseID
-exports.delete_a_cart = (req, res) => {
-  Cart.deleteOne({ CourseID: req.params.id }, function (err, data) {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(data);
-    }
-  });
-};
-
-//Display Course Given the CourseID
-exports.get_a_cart = (req, res) => {
-  Cart.findOne({ CartID: req.params.id }, (err, task) => {
-    if (err) {
-      res.send(err);
-    }
-    res.json(task);
-  });
-};
+function removeCart() {
+  localStorage.removeItem("cart");
+  if (localStorage.getItem("cart")) {
+    console.log(localStorage.getItem("cart"));
+  } else {
+    console.log("No Cart Here");
+  }
+}
