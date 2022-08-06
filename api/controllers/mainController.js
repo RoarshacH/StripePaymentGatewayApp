@@ -1,8 +1,11 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 var mongoose = require("mongoose");
 require("dotenv").config();
-
 const Products = mongoose.model("Products");
+if (typeof localStorage === "undefined" || localStorage === null) {
+  var LocalStorage = require("node-localstorage").LocalStorage;
+  localStorage = new LocalStorage("./scratch");
+}
 
 exports.fetch_home = (req, res) => {
   res.render("home", { title: "Shopping App", auth: req.oidc.isAuthenticated() ? "Logged in" : "Logged out" });
@@ -23,6 +26,7 @@ exports.fetch_products = (req, res) => {
 };
 
 exports.start_stripe_payment = (req, res) => {
+  // We are not using this Route check in cartController
   // Moreover you can take more details from user
   // like Address, Name, etc from form
   stripe.customers
@@ -59,5 +63,6 @@ exports.fetch_home_failure = (req, res) => {
 };
 
 exports.fetch_home_success = (req, res) => {
+  localStorage.removeItem("cart");
   res.render("result", { title: "Payment Result", result: "Your Payment was Successfull" });
 };

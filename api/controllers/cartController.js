@@ -39,7 +39,6 @@ exports.remove_cart = (req, res) => {
 exports.stripe_checkout = async (req, res) => {
   if (localStorage.getItem("cart")) {
     var cart = JSON.parse(localStorage.getItem("cart"));
-    // res.render("cart", { title: "My Cart", stripeKey: process.env.STRIPE_KEY, cart: cart });
     try {
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
@@ -64,8 +63,7 @@ exports.stripe_checkout = async (req, res) => {
       res.status(500).json({ error: e.message });
     }
   } else {
-    res.json({ msg: "No Cart Creted. Please Add Items to your Cart" });
-    // res.render("cart", { title: "My Cart", stripeKey: process.env.STRIPE_KEY, cart: undefined });
+    res.status(500).json({ error: "No Cart Creted. Please Add Items to your Cart" });
   }
 };
 
