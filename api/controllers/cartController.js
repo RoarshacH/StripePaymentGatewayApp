@@ -1,12 +1,10 @@
-var mongoose = require("mongoose");
+const stripe = require("stripe")(process.env.STRIPE_SECRET);
 require("dotenv").config();
 
 if (typeof localStorage === "undefined" || localStorage === null) {
   var LocalStorage = require("node-localstorage").LocalStorage;
   localStorage = new LocalStorage("./scratch");
 }
-
-// var Cart = mongoose.model("Cart");
 
 exports.get_my_cart = (req, res) => {
   console.log(localStorage.getItem("cart"));
@@ -36,6 +34,39 @@ exports.add_item_to_cart = (req, res) => {
 exports.remove_cart = (req, res) => {
   removeCart();
   res.json({ msg: `Cart Removed` });
+};
+
+exports.stripe_checkout = async (req, res) => {
+  if (localStorage.getItem("cart")) {
+    var cart = JSON.parse(localStorage.getItem("cart"));
+    // res.render("cart", { title: "My Cart", stripeKey: process.env.STRIPE_KEY, cart: cart });
+    try {
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        mode: "payment",
+        line_items: cart.items.map((item) => {
+          return {
+            price_data: {
+              currency: "cad",
+              product_data: {
+                name: item.name,
+              },
+              unit_amount: item.price,
+            },
+            quantity: item.quentity,
+          };
+        }),
+        success_url: `${process.env.CLIENT_URL}/payment/success`,
+        cancel_url: `${process.env.CLIENT_URL}/payment/failure`,
+      });
+      res.json({ url: session.url });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  } else {
+    res.json({ msg: "No Cart Creted. Please Add Items to your Cart" });
+    // res.render("cart", { title: "My Cart", stripeKey: process.env.STRIPE_KEY, cart: undefined });
+  }
 };
 
 function addToCart(newItem) {

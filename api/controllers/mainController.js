@@ -53,3 +53,11 @@ exports.start_stripe_payment = (req, res) => {
       res.send(err); // If some error occurs
     });
 };
+
+exports.fetch_home_failure = (req, res) => {
+  res.render("result", { title: "Payment Result", result: "Your Payment Failed" });
+};
+
+exports.fetch_home_success = (req, res) => {
+  res.render("result", { title: "Payment Result", result: "Your Payment was Successfull" });
+};

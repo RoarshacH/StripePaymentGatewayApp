@@ -1,1 +1,1 @@
-{"items":[{"id":"1","name":"Album 1","price":1299,"quentity":1},{"id":"2","name":"Album 2","price":1499,"quentity":1},{"id":"3","name":"Album 3","price":999,"quentity":1}],"total":999,"username":"Test User"}
+{"items":[{"id":"2","name":"Album 2","price":1499,"quentity":1},{"id":"1","name":"Album 1","price":1299,"quentity":1}],"total":2798,"username":"Test User"}

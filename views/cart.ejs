@@ -77,6 +77,25 @@
             alert("Error");
           });
       }
+
+      function checkout(){
+        fetch("http://localhost:3000/payment", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },      
+        })
+          .then(res => {
+            if (res.ok) return res.json()
+            return res.json().then(json => Promise.reject(json))
+          })
+          .then(({ url }) => {
+            window.location = url
+          })
+          .catch(e => {
+            console.error(e.error)
+          })
+      }
     </script>
 
     <main>
@@ -97,6 +116,8 @@
                 <form action="payment" method="POST">
                     <script src="//checkout.stripe.com/v2/checkout.js" class="stripe-button" data-key="<%= stripeKey %>" data-amount="2000" data-currency="cad" data-name="Test User" data-description="Test payment" data-locale="auto"></script>
                   </form>
+                  <br>
+                  <button type="button" onclick="checkout()" class="btn btn-success">Start Checkout</button>
                   <br>
                     <button type="button" onclick="clearCart()" class="btn btn-danger">Clear Cart</button>
                    
